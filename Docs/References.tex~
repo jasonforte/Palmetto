@@ -1,0 +1,10 @@
+\begin{thebibliography}{5}
+
+Use the IEEE numbered reference style for referencing your work as shown in your thesis guidelines.
+Please remember that the majority of your referenced work should be from journal articles, technical
+reports and books not online sources such as Wikipedia.
+
+
+\bibitem{smt2011} M. S. Tsoeu and M. Braae, ``Control Systems,'' \emph{IEEE}, {\bf vol. 34(3)}, pp. 123-129, 2011.
+\bibitem{jct2010} J. C. Tapson, \emph{Instrumentation}, UCT Press, Cape Town, 2010.
+\end{thebibliography}

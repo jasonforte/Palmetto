@@ -1,0 +1,31 @@
+\chapter{Literature Review}
+
+Once upon a time engineers and researchers believed... In this area of research, they used the following methods... \cite{jct2010}
+
+Write this section first as it will take you the longest. I suggest you start writing this as soon as you
+have done your initial research at the beginning of your project. You can then return to it once you
+have completed your work to edit and adjust it.
+
+A literature review forms the theoretical basis of your project. You need to read a large number of
+journal papers, sections in books, technical reports etc. relevant to your work at the start of project.
+This will give you a good idea of the field of research.
+
+When writing your review start of with the general concepts and move to the more specific aspects
+explaining the necessary theory as you go. This section is NOT a copy and paste from others work or a
+rewrite-but-change-one-word section. I suggest you read all your material, and then put it down and
+write this section, referring back to the work only when you need to check something.
+
+See your PCS textbook for more details on how to write a literature review.
+
+If you include a figure or a table in your text please see the example in Fig. \ref{fig:model} as to how to caption it.
+Please make sure that all text in your figures is readable and that you reference your figures if they are
+from another source.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7\textwidth]{model.png}
+\caption{A block diagram illustrating the connections to the IRQ pin on the MCS08GT16A microcontroller (Please
+note that your headings should be short descriptions of what is in the diagram not simply the figure title)}
+\label{fig:model}
+\end{figure}
+

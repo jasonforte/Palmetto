@@ -1,6 +1,6 @@
 Palmetto
 ========
-
+This repository relates to the final year project undertaken by Jason Forte for the degree of BSc (Eng) in Mechatronics. The associated writeup can be found here: https://www.sharelatex.com/project/5400567b945024e17e6bd597 
 
 Requirements
 ============

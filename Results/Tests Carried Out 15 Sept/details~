@@ -1,0 +1,91 @@
+### Details of Experimental Results 15 Sept 2014 ###
+
+Aim:
+
+After producing the working array-camera system it is neccessary to perform a breif examination of the system to check if there is indeed merit to the project. It is therefore the aim of this experiment to check if the system works and for which wavelength does the veins imaged appear to be clearest.
+
+Method:
+
+The apparatus was set up as follows:
+ - The array system was connected to a 12V power supply via the LED controller module. The camera was connected to a laptop running the open source video capture software vlc.
+
+ - The camera was positioned to point horizontally and objects of interest were position horizontally in front of the camera.
+
+ - Lighting was not controlled for the experiment however the apparatus was set up out of direct lighting but not in complete darkness.
+
+ - Pictures were taken of the palm, hand (dorsum) and forearm of one of the researchers. The point in the center of focus was placed at approximately 25cm away from the array.
+
+ - For each subject the following images were captured:
+	- No IR lighting (representing a control)
+	- Only 850nm lighting
+	- Only 880nm lighting
+	- Only 940nm lighting
+	- 850nm, 880nm & 940nm simultaneously
+
+ - For each lighting arrangement all eight LEDs were used in within each respective wavelength ring.
+
+ - The images were recorded in the following forma
+	<sequential number>-<subject matter>-<alignment>-<wavelength>.png
+
+	<sequential number>	-> an arbitrary unique number to identify the image
+	<subject matter>	-> for this test the following were used:
+					-palm
+					-hand-dorsum
+					-forearm
+	<alignment>		-> alignment of the subject matter (v - vertical, h - horizontal)
+	<wavelength>		-> one of none, 850, 880, 940 or all
+
+ - Other combinations of wavelengthe were not recorded as this experiment aimed to perform a minimal test of the IR system.
+
+ - The captured images were subjectively examined and compared before making conclusions and reccomendations. The images were viewed on the laptop and were compared using a basic image veiwer set to 1:1 scaling.
+
+Observetions:
+
+ - at first observation it was noticed that the all and 880nm images appeared slightly oversaturated in terms of brightness compared to the 850nm and 940nm images.
+
+ - for each image set a score was given based on the comparitive difference between no lighting and the lighting in question. The quality of the vein definition was also ranked. A scale of 1 to 10 was used. The image with the best quality was ranked 10 and then subsequent images were ranked according to the initial image.
+
+	Image Set		|	None   |    850     |    880    |    940    |   all    |
+	==============================================================================================
+	 Palm
+	-------------------------------------------------------------------------------------------------
+	Comparitive Quality	|	N/A    |     5      |    10     |     5     |    9     |
+	Vein Definition		|              |            |           |           |          |
+	
+
+
+
+
+
+
+
+
+	 
+
+
+
+
+
+
+
+
+
+NOTE ON USE OF VLC FOR CAMER CAPTURE:
+Camera Usage: In order to make use of the camera in vlc, the following commands should be entered.
+% if vlc is not installed
+>> sudo apt-get install vlc
+
+% once vlc is installed the camera URI needs to be found
+% the following command should indicate all cameras connected to the system
+>> ls /dev/video*
+/dev/video0  /dev/video1
+
+% in this experiment the usb camera was used i.e. video1. Video0 represents a webcam embedded above the screen
+% to open the device in vlc enter 
+>> vlc v4l2:///dev/video1
+
+% the vlc player should run
+
+% to capture an image go: right click > video > Take Snapshot 
+
+

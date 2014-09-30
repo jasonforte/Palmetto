@@ -3,7 +3,7 @@ Created on 23 Sep 2014
 A module to compute the contrast limited adaptive histogram enhancement method
 @author: jason
 '''
-
+import os
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -99,8 +99,21 @@ def apply_threshold():
 """ Call the main method if initiated individually """
 if __name__ == '__main__':
     start_time = time.time()
+    dir = os.path.dirname(__file__)
+    filename = os.path.join(dir, '../../tests/samples/ahe')
+    
+    img = cv2.imread(filename + ".png",0)
+    
+    """ Perform Histogram Equilisation """
+    equ = cv2.equalizeHist(img)
+    
+    """ Combine Results Side by Side """
+    #res = np.hstack((img,equ))
+    
+    cv2.imwrite(filename + "ahe_result.png", equ)
+    
     #histogram_example()
-    histogram_equalisation(output="hand_out")
+    histogram_equalisation(img= filename + "ahe", output= filename + "ahe_result")
     #histogram_equalisation("Tests//clahe_1", "Tests//ahe_1_res")
     #perform_clahe('Tests//clahe_1', output='Tests//clahe_3_res', clip=10.0)
     perform_time = time.time() - start_time

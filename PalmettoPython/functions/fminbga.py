@@ -1,9 +1,14 @@
 """
 Project: Palmetto
 
-Implemented with reference to matlab code by Prof. John Greene Department of Electrical Engineering UCT
+Adapted from matlab code produced by Prof. John Greene in the Department of Electrical Engineering at the
+University of Cape Town.
 
-Description: Contrast Limited Adaptive Histogram Enhancement Implementation with opencv
+Description: Implementation of the breeder genetic algorithm. This hill-climbing algorithm takes a random sample of points in 
+the solution space of a cost function (here it is restricted to the range 0 to 1). The cost function is evaluated
+for each sample point and the results are sorted. The top results are then used to generate new points which replace
+the bad results. The effect is that after enough generations the cost function is minimised. This method may not always
+find the global minimum but may find a good enough local minimum after a number of re-runs of the function.
 
 Created on 30 Sep 2014
 
@@ -11,23 +16,33 @@ Created on 30 Sep 2014
 @contact: <dev@dustio.com>
 """
 import numpy
-import numpy.random
-import logging
 
-logging.basicConfig(filename='..//program.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
-
-
-def fminbga(func, init=[], maxgen=1):
+def fminbga(func, init=[], maxgen=20):
     """ 
-        fminbga(costfunction, generations)    --> best vector
+        fminbga(func, init, maxgen=20)    --> best_vector, loss
         
         Inputs:
         func        -    reference to a cost function to optimise. func must have an ndarray input
         init        -    initial vector for where to start the search
-        generations -    max number of generations before killing the search
+        maxgen      -    max number of generations before killing the search
+        
+        Returns:
+        best vector - vector of inputs that minimises the cost function
+        loss        - the value of the cost function produced from the given best vector
+        
+        Requires: numpy, logging
         
         Description:
-        Runs the Breeder Genetic Algorithm (BGA) on a given cost function
+        Runs the Breeder Genetic Algorithm (BGA) on a given cost function. The input cost function must
+        map the input variable from the range 0 to 1. This is because this implementation of the BGA only
+        finds solutions in the space where the input variable are in the range 0 to 1.
+        
+        Example:
+        # input cost function
+        def cost(arr):
+            return (arr[0] - 0.333)**2 + (arr[1] - 0.666)**2 + (arr[2] - 0.111)**2
+        # call BGA to minimise the cost function with maximum of 40 generations
+        best,loss = fminbga(cost, numpy.array([1,1,1]), 40)
     """
     
     pop = 200
@@ -57,13 +72,9 @@ def fminbga(func, init=[], maxgen=1):
             #print (str(j) + " = " + str(f[j,:]))
         
         f = numpy.transpose(f)
-        print(numpy.shape(f))
-        #print(f[0, 0:100])
-        #print(f[0, 101::])
         
         flow = numpy.mean(f[0, 1:100])
         fhigh = numpy.mean(f[0, 101::])
-        print("Low Mean = %0.3f; High Mean = %0.3f" % (flow, fhigh))
         
         if flow > fhigh:
             delta *= 0.95
@@ -83,24 +94,54 @@ def fminbga(func, init=[], maxgen=1):
         # the best result is added to the first position
         T[:,0] = S[:,0]
         
-        for i in range(0, pop):
+        for i in range(1, pop):
             # construct an thresh length array of random integer values between 0 and thresh
-            R = numpy.random.permutation(thresh)
+            R = numpy.random.permutation(int(thresh))
             
             # generate a random number to compare
             rand = numpy.random.rand()
             
             if rand < 0.15:
-                
+                # Discrete recombination
+                mask = (numpy.random.rand(1,nvars) > 0.5)
+                T[:,i] = mask * pool[:,R[0]] + (1 - mask) * pool[:,R[1]]
+            else:
+                # volume recombination
+                rr = -0.25 + 1.5 * numpy.random.rand(1,nvars)
+                T[:,i] = rr * pool[:,R[0]] + (1 - rr) * pool[:,R[1]]
+            
+            # mutate the higher or lower part of the population at a higher or lower rate
+            r1 = numpy.floor(nvars * numpy.random.rand())
+            if i < 101:
+                T[r1,i] += delta * (numpy.random.randn()/1.1)
+            else:
+                T[r1,i] += delta * (1.1 * numpy.random.randn())
         
-        print(best_result)
-
+        # calculate the value of the cost function for the best input vector    
+        loss = func(S[:,0])
         
+        # print the incremental results   
+        #print("Generation " + str(gen)),
+        #print("Mutation Rate %0.3f " % delta),
+        #print("Current Best %0.5f" % loss)
     
-    
+    # return the best vector & cost function
+    return S[:,0],loss
 
-def cost(arr):
-    return (arr[0] - 0)**2 + (arr[1] - 0)**2 + (arr[2] - 0)**2
+''' The following code is used as an example whereby the cost function is minimised 
+    It was found that the BGA performs well and finds the minimum after only a few generations
+    the final cost function evaluates to 1.60432661654e-07 in
+'''
+
+
 
 if __name__ == '__main__':
-    fminbga(cost, numpy.array([1,1,1]))
+    def cost(arr):
+        return (arr[0] - 0.333)**2 + (arr[1] - 0.666)**2 + (arr[2] - 0.111)**2
+    import time
+    pre = time.time()
+    best,loss = fminbga(cost, numpy.array([1,1,1]), 40)
+    period = time.time() - pre
+    print("Execution Time: %0.4f seconds" % (time.time() - pre))
+    print(best)
+    print(loss)

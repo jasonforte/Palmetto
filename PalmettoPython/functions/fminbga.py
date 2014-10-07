@@ -30,7 +30,7 @@ def fminbga(func, init=[], maxgen=20):
         best vector - vector of inputs that minimises the cost function
         loss        - the value of the cost function produced from the given best vector
         
-        Requires: numpy, logging
+        Requires: numpy
         
         Description:
         Runs the Breeder Genetic Algorithm (BGA) on a given cost function. The input cost function must
@@ -119,11 +119,12 @@ def fminbga(func, init=[], maxgen=20):
         
         # calculate the value of the cost function for the best input vector    
         loss = func(S[:,0])
-        
         # print the incremental results   
-        #print("Generation " + str(gen)),
-        #print("Mutation Rate %0.3f " % delta),
-        #print("Current Best %0.5f" % loss)
+        print("Generation " + str(gen)),
+        print("Mutation Rate %0.3f " % delta),
+        print("Current Best %0.5f" % loss),
+        print(" >> "),
+        print(S[:,0])
     
     # return the best vector & cost function
     return S[:,0],loss
@@ -132,8 +133,6 @@ def fminbga(func, init=[], maxgen=20):
     It was found that the BGA performs well and finds the minimum after only a few generations
     the final cost function evaluates to 1.60432661654e-07 in
 '''
-
-
 
 if __name__ == '__main__':
     def cost(arr):

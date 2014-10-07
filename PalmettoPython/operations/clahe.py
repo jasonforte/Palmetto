@@ -12,7 +12,6 @@ import os
 import structure.Operation
 import cv2
 import logging
-import functions
 
 class ContrastLimitedAHE(structure.Operation):
     '''
@@ -62,17 +61,21 @@ if __name__ == '__main__':
     base = os.path.dirname(__file__)
     dirname = os.path.join(base, '../tests/samples/clahe/')
     
-    img = cv2.imread(dirname + 'clahe.png', 0)
+    img = cv2.imread(dirname + 'clahe6.png', 0)
     
     # Create a histogram of the initial image
-    functions.createHistogram(img)
+    #functions.createHistogram(img)
     
-    op = ContrastLimitedAHE(img, options={'clip':2000.0,'grid':(8,8)})
+    #op = ContrastLimitedAHE(img, options={'clip':5.531074,'grid':(10,7)})
+    
+    op = ContrastLimitedAHE(img, options={'clip':12.45,'grid':(12,8)})
     
     # Create histogram of the resulting image
-    functions.createHistogram(op)
+    #functions.createHistogram(op)
     
-    cv2.imshow('Output of CLAHE', op.execute())
+    result = op.execute()
+    #cv2.imwrite(dirname + 'clahe3_res.png', result)
+    cv2.imshow('Output of CLAHE', result)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 

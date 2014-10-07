@@ -2,13 +2,12 @@
 import numpy
 import matplotlib.pyplot
 
-def createHistogram(img, bins, figure=None):
+def createHistogram(img, figure=None):
     """
     createHistogram(ndarray img, int bins, matplotlib.figure.Figure figure) --> hist, bins
     
     Inputs:
     img         -    image to find histogram
-    bins        -    number of histogram bins
     figure      -    where to place the figure
     
     Returns:

@@ -18,10 +18,13 @@ Created on 11 Oct 2014
 @contact: <dev@dustio.com>
 """
 import cv2
-import numpy     
+import numpy
 import os
 import subprocess
+
+import structure.Base
 from structure.Operation import Operation
+
 
 class Sauvola(Operation):
     ''' 
@@ -61,8 +64,7 @@ class Sauvola(Operation):
             options['k'] = 0.03
         
         # save the image to a know location
-        self.base = os.path.dirname(__file__)
-        self.dirname = os.path.join(self.base, '../tests/samples/sauvola/')
+        self.dirname = os.path.join(structure.Base.sample_dir, 'sauvola/')
                 
         cv2.imwrite(self.dirname + 'source.png', input_image)   
         
@@ -80,11 +82,12 @@ class Sauvola(Operation):
         an output file which is read and then returned
         
         '''
-        
+        prog_location = structure.Base.base_dir + 'operations/./Sauvola'
+        print prog_location
         # tries to call the Sauvola program which outputs to result.png
         try:
             # supress the standard error
-            subprocess.check_output(['./Sauvola', 's', '-x ' + str(self.options['window'][0]),
+            subprocess.check_output([prog_location, 's', '-x ' + str(self.options['window'][0]),
                                       '-y ' + str(self.options['window'][0]),
                                        '-k ' + str(self.options['k']),
                                         self.dirname + 'source.png',
@@ -101,10 +104,10 @@ if __name__ == '__main__':
     '''
     Example of the use of the Sauvola method to enhance an image.
     '''
-    base = os.path.dirname(__file__)
-    dirname = os.path.join(base, '../tests/samples/sauvola/')
+    # select the sample image to transform
+    sample_file = structure.Base.sample_dir + 'sauvola/sample.png'
     
-    img = cv2.imread(dirname + 'sample.png', 0)
+    img = cv2.imread(sample_file, 0)
     
     op = Sauvola(cv2.GaussianBlur(img, (5, 5), 3), options={'window':(69, 13), 'k':0.01})
     

@@ -17,7 +17,6 @@ Created on 12 Oct 2014
 '''
 
 import structure.Base
-import structure.Operation
 
 class Method(list):
     '''
@@ -103,7 +102,6 @@ if __name__ == '__main__':
     # read in the image
     img = cv2.imread(sample_file, 0)
     
-    # if the image is not found
     if img == None:
         exit('Cannot Find Image at ' + sample_file)
     

@@ -46,6 +46,8 @@ class Sauvola(Operation):
     Requires: cv2, os, numpy, subprocess structure.Operation
     
     '''
+    # Decribe the Operation
+    NAME = 'Sauvola Operation'
     
     def __init__(self, input_image=numpy.ndarray, options=dict):
         '''
@@ -56,6 +58,8 @@ class Sauvola(Operation):
         k            -    multiplaction factor for the Sauvola method
         '''
         Operation.__init__(self, input_image=input_image, options=options)
+        
+        self.operation_name = 'Sauvola Method'
         
         # Check existence of values
         if not self.options.has_key('window'):
@@ -83,7 +87,7 @@ class Sauvola(Operation):
         
         '''
         prog_location = structure.Base.base_dir + 'operations/./Sauvola'
-        print prog_location
+        
         # tries to call the Sauvola program which outputs to result.png
         try:
             # supress the standard error
@@ -97,7 +101,13 @@ class Sauvola(Operation):
         except subprocess.CalledProcessError as err:
             print('Error using Sauvola Method:\n' + str(err.message))
         
-        return output       
+        return output
+    
+    def __str__(self):
+        '''
+        Returns string when printing the operation
+        '''
+        return self.NAME + ' --> ' + self.options.__str__()        
 
 
 if __name__ == '__main__':
@@ -110,6 +120,8 @@ if __name__ == '__main__':
     img = cv2.imread(sample_file, 0)
     
     op = Sauvola(cv2.GaussianBlur(img, (5, 5), 3), options={'window':(69, 13), 'k':0.01})
+    
+    print(op)
     
     # output the image in a window
     cv2.imshow("Sauvola Output", op.execute())

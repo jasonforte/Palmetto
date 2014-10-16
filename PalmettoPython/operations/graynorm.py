@@ -9,6 +9,7 @@ Created on 7 Oct 2014
 @contact: <dev@dustio.com>
 """
 import cv2
+import structure.Base
 from structure.Operation import Operation
 
 class GrayNorm(Operation):
@@ -23,13 +24,17 @@ class GrayNorm(Operation):
     Requires: cv2, structure.Operation
     
     Description:
-    This normalisation process finds the minimmum and maximum grayscale value and
-    computes each output pixel y = (x - min) * 255 / (max - min)    
+    This normalisation process finds the minimmum and maximum grayscale value and computes each output pixel y = (x - min) * 255 / (max - min)    
     
     '''
-    def __init__(self, input_image, options):      
+    
+    # define global operation name
+    NAME = 'Grayscale Normalisation'
+    DESC = "This normalisation process finds the minimmum and maximum grayscale value and \computes each output pixel y = (x - min) * 255 / (max - min)"
+    
+    def __init__(self, input_image, options=dict):      
         # call to superclass
-        super(GrayNorm, self).__init__(input_image, options)
+        Operation.__init__(self, input_image=input_image, options=options)
         
         # Check the options variable has the required options and replace if not
         if not self.options.has_key('top'):
@@ -43,21 +48,24 @@ class GrayNorm(Operation):
 
 
 if __name__ == '__main__':
-    # import the os functionality
-    import os
     
-    # setup route to sample image
-    base = os.path.dirname(__file__)
-    dirname = os.path.join(base, '../tests/samples/clahe/')
+    import functions
+    sample_image = structure.Base.sample_dir + 'sample.png'
     
     # read in image
-    img1 = cv2.imread(dirname + "clahe3.png", 0)
+    img1 = cv2.imread(sample_image, 0)
+    
+    # if the image doesn't exist
+    if img1 == None:
+        exit('No Image')
     
     # create operation object for grayscale normalisation
-    op = GrayNorm(img1, options={'bottom':0,'top':255})
+    op = GrayNorm(img1, options={'bottom':0, 'top':255})
     
     # retrieve result
     result = op.execute()
+    
+    functions.createHistogram(result)
     
     # Show output    
     cv2.imshow('Resulting Image', result)

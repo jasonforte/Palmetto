@@ -1,7 +1,8 @@
 """
-Project: 
+Project: Palmetto
 
-Description:
+Description: This script contains the functionality to compute the center of mass and crop
+operations
 
 Created on 13 Oct 2014
 
@@ -9,8 +10,10 @@ Created on 13 Oct 2014
 @contact: <dev@dustio.com>
 """
 
-from structure.Operation import Operation
 import numpy
+
+from structure.Operation import Operation
+
 
 class CenterOfMass(Operation):
     '''
@@ -22,15 +25,37 @@ class CenterOfMass(Operation):
     
     window (x,y)    -    x and y for the image you want from the center
     '''
+    
+    NAME = 'Center of Mass & Cropping'
     def __init__(self, input_image=numpy.ndarray, options=dict):
         Operation.__init__(self, input_image=input_image, options=options)
+    
     
     def execute(self):
         '''
         Find the center of mass and crop the image around it
+        
+        If the center is not close enough to the center then None is returned
         '''
-        x,y = self.CoM()
-        return self.CropWindow(x,y, self.options['window'])
+        cent = self.CoM()
+        if cent == None:
+            self.x, self.y = [0, 0]
+            return self.input_image
+        
+        self.x, self.y = cent
+        
+        # self.printDot()
+        
+        return self.CropWindow(self.x, self.y, self.options['window'])
+    
+    def printDot(self):
+        try:
+            self.input_image[self.x + 1, self.y] = 255
+            self.input_image[self.x - 1, self.y] = 255
+            self.input_image[self.x, self.y + 1] = 255
+            self.input_image[self.x, self.y - 1] = 255
+        except IndexError:
+            pass
     
     def CoM(self):
         
@@ -41,52 +66,75 @@ class CenterOfMass(Operation):
         yr = 0.0
         
         mass = 0.0
+        
         for i in range(0, sh[0], 16):
             for j in range(0, sh[1], 16):
                 '''
                 find the moment about the axes
                 '''
-                xr += self.input_image[i,j] * i
-                yr += self.input_image[i,j] * j
-                mass += self.input_image[i,j]
+                xr += self.input_image[i, j] * i
+                yr += self.input_image[i, j] * j
+                mass += self.input_image[i, j]
         
-        x_m = xr/mass
-        y_m = yr/mass
+        if mass == 0.0:
+            return None
+        x_m = xr / mass
+        y_m = yr / mass
         
         return int(x_m), int(y_m)
     
-    def CropWindow(self, x, y, window=(64,64)):
-        # ensure that two half windows is not bigger than the given window dimentsion
+    def CropWindow(self, x, y, window=(64, 64)):
+        # ensure that two half windows is not bigger than the given window dimension
         # even if an odd value is given
-        borderY = int(numpy.ceil(window[0]/2.0 - window[0]%2))
-        borderX = int(numpy.ceil(window[1]/2.0 - window[1]%2))
         
-        return self.input_image[x-borderX:x+borderX, y-borderY: y+borderY]
- 
+        borderY = int(numpy.ceil(window[0] / 2.0 - window[0] % 2))
+        borderX = int(numpy.ceil(window[1] / 2.0 - window[1] % 2))
+        
+        dim = numpy.shape(self.input_image)
+        
+        # print ((borderX, borderY, dim))
+        
+        top_x = x + borderX
+        top_y = y + borderY
+        bottom_x = x - borderX
+        bottom_y = y - borderY
+        
+#         print((x, y))
+        
+#         print((bottom_x, top_x, bottom_y, top_y))
+        
+        if x < borderX:
+            bottom_x = 0
+            top_x = borderX * 2
+         
+        if y < borderY:
+            bottom_y = 0
+            top_y = borderY * 2
+         
+        if x > dim[0] - borderX:
+            bottom_x = dim[0] - borderX * 2
+            top_x = dim[0]
+         
+        if y > dim[1] - borderY:
+            bottom_y = dim[1] - borderY * 2
+            top_y = dim[1]
+#         print('Converted -> '),
+#         print((bottom_x, top_x, bottom_y, top_y))
+        
+        return self.input_image[bottom_x:top_x, bottom_y:top_y]
     
 if __name__ == '__main__':
     
-    import os
     import cv2
-    import time
+    import structure.Base
     
-    # setup directory
-    base = os.path.dirname(__file__)
-    dirname = os.path.join(base, '../tests/samples/clahe/')
+    sample_image = structure.Base.sample_dir + 'sample.png'
     
-    img1 = cv2.imread(dirname + "clahe7.png", 0)    
+    img1 = cv2.imread(sample_image, 0)    
     
     op = CenterOfMass(img1, options={'window': (420, 380)})
-    
-    #op = AdaptiveThreshold(op.execute(), options={'C':0.1,'grid':21})
-    
-    start_time = time.time()
-    
+
     result = op.execute()
-    
-    time_taken = time.time() - start_time
-    
-    print('Took %0.5f seconds' % time_taken)
     
     cv2.imshow('Resulting Image', result)
     cv2.waitKey(0)

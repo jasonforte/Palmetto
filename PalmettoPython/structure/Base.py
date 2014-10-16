@@ -21,4 +21,4 @@ Created on Oct 12, 2014
 base_dir = '/home/jason/Projects/Palmetto/PalmettoPython/'
 
 # When an individual operation is run it loads sample images from this location
-sample_dir = base_dir + 'tests/samples/'
+sample_dir = base_dir + 'examples/'

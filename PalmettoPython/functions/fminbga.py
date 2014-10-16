@@ -16,6 +16,7 @@ Created on 30 Sep 2014
 @contact: <dev@dustio.com>
 """
 import numpy
+import time
 
 def fminbga(func, init=[], maxgen=20):
     """ 
@@ -49,7 +50,7 @@ def fminbga(func, init=[], maxgen=20):
     nvars = len(init)
     
     # Define the threshold for selection of a new generation
-    thresh = round(pop*15.0/100)
+    thresh = round(pop * 15.0 / 100)
     
     best_result = []
     
@@ -59,17 +60,20 @@ def fminbga(func, init=[], maxgen=20):
     T = numpy.random.rand(nvars, pop)
     
     # add init as the seed point
-    T[:,0] = init
+    T[:, 0] = init
     
-    #print(T[0,:])    # print column 1
+    # print(T[0,:])    # print column 1
     
-    for gen in range(0,maxgen):
+    for gen in range(0, maxgen):
+        
+        start_time = time.time()
+        
         f = numpy.zeros((pop, 1))
         
         # evaluate the function for entire population
-        for j in range(0,pop):
-            f[j,:] = - func(T[:,j])
-            #print (str(j) + " = " + str(f[j,:]))
+        for j in range(0, pop):
+            f[j, :] = -func(T[:, j])
+            # print (str(j) + " = " + str(f[j,:]))
         
         f = numpy.transpose(f)
         
@@ -83,16 +87,16 @@ def fminbga(func, init=[], maxgen=20):
         
         """ Sort the f vector in decending order and apply the changes to the T vector
             This gives the best solution at S[:,0] """
-        S = T[:, numpy.argsort(-f[0,:])]
+        S = T[:, numpy.argsort(-f[0, :])]
         
         # save best result and accompanying cost function result
-        best_result.append([S[:,0], func(S[:,0])])
+        best_result.append([S[:, 0], func(S[:, 0])])
         
         # now the best results are chosen for the next generation
-        pool = S[:,0:thresh]
+        pool = S[:, 0:thresh]
         
         # the best result is added to the first position
-        T[:,0] = S[:,0]
+        T[:, 0] = S[:, 0]
         
         for i in range(1, pop):
             # construct an thresh length array of random integer values between 0 and thresh
@@ -103,31 +107,32 @@ def fminbga(func, init=[], maxgen=20):
             
             if rand < 0.15:
                 # Discrete recombination
-                mask = (numpy.random.rand(1,nvars) > 0.5)
-                T[:,i] = mask * pool[:,R[0]] + (1 - mask) * pool[:,R[1]]
+                mask = (numpy.random.rand(1, nvars) > 0.5)
+                T[:, i] = mask * pool[:, R[0]] + (1 - mask) * pool[:, R[1]]
             else:
                 # volume recombination
-                rr = -0.25 + 1.5 * numpy.random.rand(1,nvars)
-                T[:,i] = rr * pool[:,R[0]] + (1 - rr) * pool[:,R[1]]
+                rr = -0.25 + 1.5 * numpy.random.rand(1, nvars)
+                T[:, i] = rr * pool[:, R[0]] + (1 - rr) * pool[:, R[1]]
             
             # mutate the higher or lower part of the population at a higher or lower rate
             r1 = numpy.floor(nvars * numpy.random.rand())
             if i < 101:
-                T[r1,i] += delta * (numpy.random.randn()/1.1)
+                T[r1, i] += delta * (numpy.random.randn() / 1.1)
             else:
-                T[r1,i] += delta * (1.1 * numpy.random.randn())
+                T[r1, i] += delta * (1.1 * numpy.random.randn())
         
         # calculate the value of the cost function for the best input vector    
-        loss = func(S[:,0])
+        loss = func(S[:, 0])
         # print the incremental results   
         print("Generation " + str(gen)),
         print("Mutation Rate %0.3f " % delta),
         print("Current Best %0.5f" % loss),
         print(" >> "),
-        print(S[:,0])
+        print(S[:, 0])
+        print("Generation Took %.4f seconds" % (time.time() - start_time))
     
     # return the best vector & cost function
-    return S[:,0],loss
+    return S[:, 0], loss
 
 ''' The following code is used as an example whereby the cost function is minimised 
     It was found that the BGA performs well and finds the minimum after only a few generations
@@ -135,11 +140,17 @@ def fminbga(func, init=[], maxgen=20):
 '''
 
 if __name__ == '__main__':
+    '''
+    This example makes use of the breeder genetic algorithm to find the values that satisfy
+    the cost function
+    
+    J = (x - 0.333)**2 + (x - 0.666)**2 + (z - 0.111)**2 = 0
+    '''
     def cost(arr):
-        return (arr[0] - 0.333)**2 + (arr[1] - 0.666)**2 + (arr[2] - 0.111)**2
-    import time
+        return (arr[0] - 0.333) ** 2 + (arr[1] - 0.666) ** 2 + (arr[2] - 0.111) ** 2
+    
     pre = time.time()
-    best,loss = fminbga(cost, numpy.array([1,1,1]), 40)
+    best, loss = fminbga(cost, numpy.array([1, 1, 1]), 40)
     period = time.time() - pre
     print("Execution Time: %0.4f seconds" % (time.time() - pre))
     print(best)

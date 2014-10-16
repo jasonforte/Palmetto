@@ -24,8 +24,8 @@ class Operation(object):
     Description: This class forms the basis of other operation subclasses. 
     """   
     # Brief Operation Name & Description
-    name = ""
-    desctiption = ""
+    NAME = "Unnamed"
+    DESC = "No Description"
     
     def __init__(self, input_image=numpy.ndarray, options=dict):
         '''
@@ -38,7 +38,7 @@ class Operation(object):
         '''
         execute() -> unimplemented
         '''
-        pass
+        return self.input_image
 
 """ if statement to initiate from terminal """
 if __name__ == '__main__':

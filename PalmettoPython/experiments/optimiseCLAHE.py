@@ -15,6 +15,7 @@ import functions.fminbga
 import scipy.spatial.distance
 import operations.clahe
 import numpy
+from operations.threshold import CVThreshold
 
 def difference(img1, img2):
     return scipy.spatial.distance.pdist([img1.flatten(), img2.flatten()], 'euclidean')
@@ -52,7 +53,8 @@ def hammingCost(arr):
     #print ([clip, x, y]),
     
     # get the clahe resulting image
-    op = operations.clahe.ContrastLimitedAHE(img1, options={'clip':clip,'grid':(x,y)}) 
+    #op = operations.clahe.ContrastLimitedAHE(img1, options={'clip':clip,'grid':(x,y)}) 
+    op = CVThreshold(img1, options={'clip':clip, 'grid':(x,y)})
     
     J = difference(op.execute(), img2)
     
@@ -69,9 +71,15 @@ if __name__ == '__main__':
     
     img1 = cv2.imread(dirname + "clahe9.png", 0)
     
-    img2 = cv2.imread(dirname + "clahe9_ideal.png", 0)
+    #img2 = cv2.imread(dirname + "clahe9_ideal.png", 0)
     
-    best,loss = functions.fminbga.fminbga(hammingCost, numpy.array([0.00105956,  0.53489601,  0.3836524]), 10)
+    
+    
+    #best,loss = functions.fminbga.fminbga(hammingCost, numpy.array([0.00105956,  0.53489601,  0.3836524]), 10)
+    
+    cv2.imshow('Resulting Image', op.execute())
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     
     print(best),
     print(" >> "),        
